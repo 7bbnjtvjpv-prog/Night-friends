@@ -21,8 +21,103 @@ function persist(){try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){
 let artStore={};try{const a=JSON.parse(localStorage.getItem(ARTKEY));if(a&&typeof a==='object')artStore=a}catch(e){}
 const levels=[1,3,5,8,12],titles=['첫인사','눈이 마주친 사이','자주 보는 사이','절친','죽을 때까지 함께하는 친구'];const level=n=>levels.filter(v=>n>=v).length;
 let uid=0;
-function svgArt(g){const id='nf'+(++uid),fox=g.id==='fox',momo=g.id==='momo',mary=g.id==='mary';let tails='';if(fox)for(let i=0;i<9;i++)tails+=`<path d="M140 239Q${-30+i*37} 109 ${-2+i*34} 5Q${80+i*17} 130 148 241Z" fill="url(#${id}tail)" stroke="#593744" transform="rotate(${(i-4)*6} 140 239)"/>`;let hair='';for(let i=0;i<32;i++){const x=63+i*5;hair+=`<path d="M${x} ${45+Math.abs(i-16)*2}Q${x-20} 130 ${x+(i<16?-26:26)} 272" fill="none" stroke="${i%3?'#131a1e':'#364142'}" stroke-width="${1+i%4}" opacity=".8"/>`}
-return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 330" role="img" aria-label="${g.name} 게임 삽화"><defs><radialGradient id="${id}skin" cx="43%" cy="40%"><stop stop-color="${momo?'#c9c4aa':fox?'#cfb6ae':'#b4c2bc'}"/><stop offset=".55" stop-color="#71877e"/><stop offset="1" stop-color="#20343a"/></radialGradient><linearGradient id="${id}tail"><stop stop-color="#b9a09b"/><stop offset=".5" stop-color="#633b48"/><stop offset="1" stop-color="#0c171d"/></linearGradient><linearGradient id="${id}robe" x2="0" y2="1"><stop stop-color="#6f8b83" stop-opacity=".8"/><stop offset="1" stop-color="#122229" stop-opacity="0"/></linearGradient></defs>${tails}<path d="M44 324Q34 233 99 191L180 191Q245 230 244 325Z" fill="url(#${id}robe)"/><path d="M43 284Q18 112 76 42Q144 -5 205 44Q253 108 234 288L182 207 95 206Z" fill="#10171b"/>${fox?`<path d="M82 78L52 8 116 48M166 49L227 7 199 83" fill="url(#${id}skin)"/>`:''}<path d="M79 76Q141 33 202 77L194 148Q173 204 142 219Q103 199 88 151Z" fill="url(#${id}skin)"/><path d="M85 110Q111 90 129 120M154 119Q177 90 198 110" fill="#15262d" stroke="#516458" stroke-width="4"/>${momo?'<ellipse cx="111" cy="120" rx="23" ry="28" fill="#bac5b5"/><ellipse cx="172" cy="120" rx="23" ry="28" fill="#bac5b5"/><ellipse cx="111" cy="124" rx="5" ry="11" fill="#061117"/><ellipse cx="172" cy="124" rx="5" ry="11" fill="#061117"/>':`<path d="M90 119Q111 106 129 120L97 124ZM155 120Q175 106 193 119L188 124Z" fill="${fox||mary?'#bd737a':'#b8d0c6'}"/>`}<path d="M142 124L132 159 147 164" fill="none" stroke="#354a49" stroke-width="3"/><path d="M${momo?88:121} 179Q142 ${momo?224:208} ${momo?197:166} 179Q142 191 ${momo?88:121} 179" fill="#131b22" stroke="#67444d" stroke-width="3"/><path d="M96 136L105 164M186 136L176 162M112 81L125 101" stroke="#365457" stroke-width="3" opacity=".7"/>${hair}${mary?'<path d="M97 128Q88 158 98 191M185 129L192 169" stroke="#723c4a" stroke-width="3" fill="none"/>':''}${fox?'<circle cx="142" cy="264" r="22" fill="#995f74" stroke="#dac0b0"/><circle cx="135" cy="256" r="6" fill="#f4d6bf" opacity=".7"/>':''}<path d="M53 296Q67 259 74 228L79 202 84 248 93 207 97 257 111 220 111 278 119 260 125 264 111 300" fill="#536d68" opacity=".6"/></svg>`}
+function svgArt(g) {
+  const colors = {
+    llorona: '#a9c5cb',
+    mary: '#c6aaaa',
+    momo: '#c4baa2',
+    fox: '#b8a5aa'
+  };
+  const color = colors[g.id] || '#b8c3bc';
+
+  let tails = '';
+  if (g.id === 'fox') {
+    for (let i = 0; i < 9; i++) {
+      tails += `
+        <ellipse
+          cx="100" cy="110" rx="16" ry="83"
+          fill="${i % 2 ? '#512e3a' : '#724652'}"
+          transform="rotate(${(i - 4) * 21} 100 166)"
+        />
+      `;
+    }
+  }
+
+  const ears = g.id === 'fox'
+    ? `<path
+         d="M60 58L44 8 86 44M114 44L156 8 140 58"
+         fill="#b4a0a3"
+       />`
+    : '';
+
+  const eyes = g.id === 'momo'
+    ? `
+      <ellipse cx="75" cy="88" rx="16" ry="20" fill="#e6ddc4"/>
+      <ellipse cx="125" cy="88" rx="16" ry="20" fill="#e6ddc4"/>
+      <circle cx="75" cy="90" r="5" fill="#161d18"/>
+      <circle cx="125" cy="90" r="5" fill="#161d18"/>
+    `
+    : `
+      <path
+        d="M63 85L87 91 69 95M137 85L113 91 131 95"
+        fill="#c45358"
+      />
+    `;
+
+  const mouth = g.id === 'momo'
+    ? `<path
+         d="M66 119Q100 151 136 119Q100 137 66 119"
+         fill="#211b1d"
+       />`
+    : `<ellipse
+         cx="100" cy="124" rx="9" ry="16"
+         fill="#241d22"
+       />`;
+
+  const tears = g.id === 'llorona'
+    ? `<path
+         d="M76 100L74 119M124 100L126 119"
+         stroke="#426477" stroke-width="4"
+       />`
+    : '';
+
+  const orb = g.id === 'fox'
+    ? `<circle
+         cx="100" cy="177" r="15"
+         fill="#954659" stroke="#e0b5b8"
+       />`
+    : '';
+
+  return `
+    <svg
+      viewBox="0 0 200 210"
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="${g.name} 게임 삽화"
+    >
+      ${tails}
+      <path
+        d="M38 175Q29 82 57 46Q100 13 143 46Q171 82 162 175Z"
+        fill="#11171a"
+      />
+      ${ears}
+      <path
+        d="M57 67Q100 40 143 67L138 112Q126 159 100 161Q74 159 62 112Z"
+        fill="${color}"
+      />
+      ${eyes}
+      ${mouth}
+      <path
+        d="M57 68Q54 115 43 172M140 67Q143 130 161 177"
+        stroke="#11171a"
+        stroke-width="13"
+        fill="none"
+      />
+      ${tears}
+      ${orb}
+    </svg>
+  `;
+}
 function putArt(el,g){el.replaceChildren();if(artStore[g.id]){const img=document.createElement('img');img.alt=g.name;img.src=artStore[g.id];img.onerror=()=>{img.remove();el.innerHTML=svgArt(g)};el.append(img)}else el.innerHTML=svgArt(g)}
 let messageTimer=0;function toast(t,ms=2200){clearTimeout(messageTimer);$('message').textContent=t;messageTimer=setTimeout(()=>$('message').textContent='',ms)}
 let running=false,audio=null,stream=null,heading=0,manual=true,sensorAllowed=false,sensorReceived=false,sensorToken=0,active=null,nextSpawn=0,detector=0,visiblePreviously=false,selected=null,lastBeep=0,flashUntil=0,dragX=null,noiseTick=0;
